@@ -1,0 +1,73 @@
+def check_point_validity(
+    self,
+    point: Point,
+    top_right: bool,
+) -> None:
+
+    # Check if the point is currently an invalid placement point (e.g. this point
+    # is a bottom-left point for another object that didn't have a floor until now)
+    if point in self.invalid_points:
+        self.invalid_points.remove(point)
+        self.valid_points.append(point)
+
+    else:
+        # Check if the point is in a corner (difers based on whether the point is
+        # a top-right or bottom-left corner)
+        if top_right:
+            check = Point(x=point.x, y=point.y + 1)
+            over_bounds = check.x == 0
+        else:
+            check = Point(x=point.x + 1, y=point.y)
+            over_bounds = check.y == 0
+
+        if over_bounds or self.check_overlaps(check, border=True):
+            # Check if there is no object already placed in the corner
+            if top_right:
+                over_bounds = check.y <= self.boundary.y
+            else:
+                over_bounds = check.x <= self.boundary.x
+            check = Point(x=point.x + 1, y=point.y + 1)
+
+            if over_bounds and not self.check_overlaps(check, border=True):
+                # The point is a valid placement point - add it to the valid points
+                self.valid_points.append(point)
+
+        else:
+            # The point is not currently a valid placement point - add it to the
+            # invalid points
+            self.invalid_points.append(point)
+
+def bottom_left_fill(
+    self,
+    object: Rectangle,
+) -> None:
+
+    if not self.valid_points:
+        self.valid_points.append(Point(x=0, y=0))
+
+    for point in self.valid_points:
+        object.x, object.y = point
+
+        if (
+            self.check_overlaps(object)
+            or object.x + object.width >= self.boundary.x
+        ):
+            continue
+
+        # if there are no overlaps, the object has been successfully placed
+        self.placed.append(deepcopy(object))
+
+        # Check if the bottom-left corner is a valid placement spot
+        new_point = Point(x=object.x + object.width, y=object.y)
+        self.check_point_validity(new_point, top_right=False)
+
+        # Check if the top-right corner is a valid placement spot
+        new_point = Point(x=object.x, y=object.y + object.height)
+        self.check_point_validity(new_point, top_right=True)
+
+        break
+
+    self.valid_points.remove(point)
+
+    # Keep valid_points sorted in a bottom-left fashion
+    self.valid_points.sort(key=lambda p: (p.y, p.x))

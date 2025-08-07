@@ -1,0 +1,131 @@
+def check_by_merging(self, current_objects: list[BoxObject]) -> None:
+    if self.block == []:
+        if len(current_objects) != 1:
+            current_objects = sorted(current_objects, key=lambda obj: (obj.y, obj.x))
+            for i, o1 in enumerate(current_objects):
+                for j, o2 in enumerate(current_objects[i + 1:]):
+                    real_j = j + i + 1
+                    if o1.width == o2.width <= self.dimensions[0] and o1.height + o2.height <= self.dimensions[1]:
+                        copy = deepcopy(current_objects)
+                        o1, o2 = copy[i], copy[real_j]
+                        for o in [o1, o2]:
+                            if o.contains == []:
+                                o.contains = [o]
+                        print("A -", o2, o1)
+                        new_object = o1.merge(o2, x_merge=False)
+                        print("    merge:", new_object.contains)
+                        copy.pop(real_j)
+                        copy.pop(i)
+                        copy.append(new_object)
+                        self.check_by_merging(copy)
+
+                    if o1.height == o2.height <= self.dimensions[1] and o1.width + o2.width <= self.dimensions[0]:
+                        copy = deepcopy(current_objects)
+                        o1, o2 = copy[i], copy[real_j]
+                        for o in [o1, o2]:
+                            if o.contains == []:
+                                o.contains = [o]
+                        print("B -", o2, o1)
+                        new_object = o1.merge(o2, x_merge=True)
+                        print("    merge:", new_object.contains)
+                        copy.pop(real_j)
+                        copy.pop(i)
+                        copy.append(new_object)
+                        self.check_by_merging(copy)
+
+                    if (self.allow_rotations):
+
+                        if o1.height == o2.height <= self.dimensions[0] and o1.width + o2.width <= self.dimensions[1]:
+                            copy = deepcopy(current_objects)
+                            o1, o2 = copy[i], copy[real_j]
+                            o1.flip()
+                            o2.flip()
+                            for o in [o1, o2]:
+                                if o.contains == []:
+                                    o.contains = [o]
+                            print("C -", o2, o1)
+                            new_object = o1.merge(o2, x_merge=False)
+                            print("    merge:", new_object.contains)
+                            copy.pop(real_j)
+                            copy.pop(i)
+                            copy.append(new_object)
+                            self.check_by_merging(copy)
+                            
+                        if o1.width == o2.width <= self.dimensions[1] and o1.height + o2.height <= self.dimensions[0]:
+                            copy = deepcopy(current_objects)
+                            o1, o2 = copy[i], copy[real_j]
+                            o1.flip()
+                            o2.flip()
+                            for o in [o1, o2]:
+                                if o.contains == []:
+                                    o.contains = [o]
+                            print("D -", o2, o1)
+                            new_object = o1.merge(o2, x_merge=True)
+                            print("    merge:", new_object.contains)
+                            copy.pop(real_j)
+                            copy.pop(i)
+                            copy.append(new_object)
+                            self.check_by_merging(copy)
+                        
+                        if o1.width == o2.height <= self.dimensions[0] and o1.height + o2.width <= self.dimensions[1]:
+                            copy = deepcopy(current_objects)
+                            o1, o2 = copy[i], copy[real_j]
+                            o2.flip()
+                            for o in [o1, o2]:
+                                if o.contains == []:
+                                    o.contains = [o]
+                            print("E -", o2, o1)
+                            new_object = o1.merge(o2, x_merge=False)
+                            print("    merge:", new_object.contains)
+                            copy.pop(real_j)
+                            copy.pop(i)
+                            copy.append(new_object)
+                            self.check_by_merging(copy)
+
+                        if o1.height == o2.width <= self.dimensions[1] and o1.width + o2.height <= self.dimensions[0]:
+                            copy = deepcopy(current_objects)
+                            o1, o2 = copy[i], copy[real_j]
+                            o2.flip()
+                            for o in [o1, o2]:
+                                if o.contains == []:
+                                    o.contains = [o]
+                            print("F -", o2, o1)
+                            new_object = o1.merge(o2, x_merge=True)
+                            print("    merge:", new_object.contains)
+                            copy.pop(real_j)
+                            copy.pop(i)
+                            copy.append(new_object)
+                            self.check_by_merging(copy)
+
+                        if o1.height == o2.width <= self.dimensions[0] and o1.width + o2.height <= self.dimensions[1]:
+                            copy = deepcopy(current_objects)
+                            o1, o2 = copy[i], copy[real_j]
+                            o1.flip()
+                            for o in [o1, o2]:
+                                if o.contains == []:
+                                    o.contains = [o]
+                            print("G -", o2, o1)
+                            new_object = o1.merge(o2, x_merge=False)
+                            print("    merge:", new_object.contains)
+                            copy.pop(real_j)
+                            copy.pop(i)
+                            copy.append(new_object)
+                            self.check_by_merging(copy)
+
+                        if o1.width == o2.height <= self.dimensions[1] and o1.height + o2.width <= self.dimensions[0]:
+                            copy = deepcopy(current_objects)
+                            o1, o2 = copy[i], copy[real_j]
+                            o1.flip()
+                            for o in [o1, o2]:
+                                if o.contains == []:
+                                    o.contains = [o]
+                            print("H -", o2, o1)
+                            new_object = o1.merge(o2, x_merge=True)
+                            print("    merge:", new_object.contains)
+                            copy.pop(real_j)
+                            copy.pop(i)
+                            copy.append(new_object)
+                            self.check_by_merging(copy)
+        else: 
+            self.block = current_objects[0].contains
+            print("Guillotineable solution found:", self.block)
