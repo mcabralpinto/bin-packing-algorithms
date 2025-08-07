@@ -4,7 +4,7 @@ from algorithm_base import AlgorithmBase
 
 
 @dataclass
-class BLHeightOptimizer(AlgorithmBase):
+class HeightOptimizer(AlgorithmBase):
     """
     Finds the optimal BL placement order of objects to minimize the total height of the
     full placed set on the board.
@@ -62,4 +62,4 @@ class BLHeightOptimizer(AlgorithmBase):
 
 
 if __name__ == "__main__":
-    BLHeightOptimizer().run()
+    HeightOptimizer().run()
